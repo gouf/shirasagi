@@ -63,7 +63,7 @@ module Cms::PublicFilter
   end
 
   def set_path
-    @path ||= request.env["REQUEST_PATH"]
+    @path ||= request.env['REQUEST_PATH']
 
     path = @path.dup
     @@filters.each do |name|
