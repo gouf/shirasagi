@@ -53,6 +53,15 @@ module Cms::PublicFilter
     raise "404" if !@cur_site
   end
 
+  def set_site
+    host = request.env['HTTP_X_FORWARDED_HOST'] || request.env['HTTP_HOST']
+    @cur_site ||= SS::Site.find_by(domains: host)
+  rescue
+    @cur_site ||= SS::Site.first if Rails.env.development?
+  ensure
+    fail '404' unless @cur_site
+  end
+
   def set_path
     @path ||= request.env["REQUEST_PATH"]
 
