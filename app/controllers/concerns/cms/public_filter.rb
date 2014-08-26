@@ -99,10 +99,7 @@ module Cms::PublicFilter
     rescue Sass::SyntaxError => e
       msg  = e.backtrace[0].sub(/.*?\/_\//, "")
       msg  = "[#{msg}]\\A #{e}".gsub('"', '\\"')
-      css  = "body:before { position: absolute; top: 8px; right: 8px; display: block;"
-      css << " padding: 4px 8px; border: 1px solid #b88; background-color: #fff;"
-      css << " color: #822; font-size: 85%; font-family: tahoma, sans-serif; line-height: 1.6;"
-      css << " white-space: pre; z-index: 9; content: \"#{msg}\"; }"
+      css  = default_css_style(msg)
     end
 
     Fs.write @file, css
@@ -113,6 +110,18 @@ module Cms::PublicFilter
     response.headers["Expires"] = 1.days.from_now.httpdate if file =~ /\.(css|js|gif|jpg|png)$/
     response.headers["Last-Modified"] = CGI::rfc1123_date(Fs.stat(file).mtime)
     send_file file, disposition: :inline, x_sendfile: true
+  def default_css_style(msg)
+    # return removed head spaces css
+    <<-EOF.gsub(/^\s+/, '')
+    body:before { position: absolute; top: 8px; right: 8px; display: block;
+    padding: 4px 8px; border: 1px solid #b88; background-color: #fff;
+    color: #822; font-size: 85%; font-family: tahoma, sans-serif; line-height: 1.6;
+    white-space: pre; z-index: 9; content: \"#{msg}\"; }
+    body:before { position: absolute; top: 8px; right: 8px; display: block;
+    padding: 4px 8px; border: 1px solid #b88; background-color: #fff;
+    color: #822; font-size: 85%; font-family: tahoma, sans-serif; line-height: 1.6;
+    white-space: pre; z-index: 9; content: \"#{msg}\"; }
+    EOF
   end
 
   def find_node(path)
