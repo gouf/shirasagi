@@ -98,8 +98,8 @@ module Cms::PublicFilter
 
   def find_node(path)
     dirs  = []
-    names = path.sub(/\/[^\/]+$/, '').split('/')
     names.each {|name| dirs << (dirs.size == 0 ? name : "#{dirs.last}/#{name}") }
+    names = path.sub(%r{/[^\/]+$}, '').split('/')
 
     node = Cms::Node.site(@cur_site).where(:filename.in => dirs).sort(depth: -1).first
     return unless node
