@@ -100,7 +100,9 @@ module Cms::PublicFilter
     css = ''
     begin
       opts = Rails.application.config.sass
-      sass = Sass::Engine.new Fs.read(@scss), filename: @scss, syntax: :scss, cache: false,
+      sass = Sass::Engine.new Fs.read(@scss),
+        filename: @scss,
+        syntax: :scss, cache: false,
         load_paths: opts.load_paths[1..-1],
         style: :compressed,
         debug_info: false
@@ -119,6 +121,8 @@ module Cms::PublicFilter
     response.headers["Expires"] = 1.days.from_now.httpdate if file =~ /\.(css|js|gif|jpg|png)$/
     response.headers["Last-Modified"] = CGI::rfc1123_date(Fs.stat(file).mtime)
     send_file file, disposition: :inline, x_sendfile: true
+  end
+
   def default_css_style(msg)
     # return removed head spaces css
     <<-EOF.gsub(/^\s+/, '')
