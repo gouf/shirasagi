@@ -87,7 +87,7 @@ module Cms::PublicFilter
   end
 
   def deny_path
-    raise '404' if @path =~ /^\/sites\/.\//
+    raise '404' if @path =~ %r{^/sites/./}
   end
 
   def parse_path
