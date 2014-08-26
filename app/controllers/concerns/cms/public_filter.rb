@@ -21,30 +21,37 @@ module Cms::PublicFilter
   public
 
   def index
-    if @html =~ /\.layout\.html$/
-      layout = find_layout(@html)
-      raise "404" unless layout
-      send_layout render_layout(layout)
-
-    elsif @html =~ /\.part\.html$/
-      part = find_part(@html)
-      raise "404" unless part
-      send_part render_part(part)
-
-    else
-      page = find_page(@html)
-      send_page render_page(page) if page
-
-      if response.body.blank?
-        node = find_node(@html)
-        raise "404" unless node
-        send_node render_node(node)
+    data =
+      case @html
+      when /\.layout\.html$/
+        find_layout(@html)
+      when /\.part\.html$/
+        find_part(@html)
+      else
+        find_and_send_page
       end
-    end
-    raise "404" if response.body.blank?
+    fail '404' unless data
   end
 
   private
+
+  def send_and_render_page(page)
+    rendered_page = render_page(page)
+    send_page(rendered_page)
+  end
+
+  def find_and_send_page
+    if (page = find_page(@html))
+      send_and_render_page(page)
+    end
+
+    if response.body.blank?
+      node = find_node(@html)
+      fail '404' unless node
+      send_node render_node(node)
+    end
+    !response.body.blank?
+  end
 
   def set_site
     host = request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]
@@ -87,6 +94,34 @@ module Cms::PublicFilter
     @path = @path.sub(/\/$/, "/index.html").sub(/^\//, "")
     @html = @path.sub(/^\//, "").sub(/\.\w+$/, ".html")
     @file = File.join(@cur_site.path, @path)
+  end
+
+  def find_node(path)
+    dirs  = []
+    names = path.sub(/\/[^\/]+$/, "").split('/')
+    names.each {|name| dirs << (dirs.size == 0 ? name : "#{dirs.last}/#{name}") }
+
+    node = Cms::Node.site(@cur_site).where(:filename.in => dirs).sort(depth: -1).first
+    return unless node
+    @preview || node.public? ? node : nil
+  end
+
+  def render_node(node, path = @path)
+    rest = path.sub(/^#{node.filename}/, "")
+    cell = recognize_path "/.#{@cur_site.host}/nodes/#{node.route}#{rest}"
+    return unless cell
+
+    @cur_node   = node
+    @cur_layout = node.layout
+    render_cell node.route.sub(/\/.*/, "/#{cell[:controller]}/view"), cell[:action]
+  end
+
+  def redirect_slash
+    redirect_to "#{request.env['REQUEST_PATH']}/"
+  end
+
+  def deny_path
+    fail '404' if @path =~ %r{^/sites\/./}
   end
 
   def compile_scss
