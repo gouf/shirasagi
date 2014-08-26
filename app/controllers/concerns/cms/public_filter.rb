@@ -97,7 +97,7 @@ module Cms::PublicFilter
     css_mtime = Fs.exists?(@file) ? Fs.stat(@file).mtime : 0
     return if Fs.stat(@scss).mtime.to_i <= css_mtime.to_i
 
-    css = ""
+    css = ''
     begin
       opts = Rails.application.config.sass
       sass = Sass::Engine.new Fs.read(@scss), filename: @scss, syntax: :scss, cache: false,
