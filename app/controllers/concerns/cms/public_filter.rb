@@ -217,14 +217,14 @@ module Cms::PublicFilter
       dir = "#{@cur_site.path}"
       ["#{status}.html", '500.html'].each do |name|
         file = "#{dir}/#{name}"
-        render(status: status, file: file, layout: false) and return if Fs.exists?(file)
+        render(status: status, file: file, layout: false) && return if Fs.exists?(file)
       end
     end
 
     dir = Rails.public_path.to_s
     ["#{status}.html", '500.html'].each do |name|
       file = "#{dir}/#{name}"
-      render(status: status, file: file, layout: false) and return if Fs.exists?(file)
+      render(status: status, file: file, layout: false) && return if Fs.exists?(file)
     end
 
     render status: status, nothing: true
