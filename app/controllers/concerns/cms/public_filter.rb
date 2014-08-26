@@ -54,7 +54,7 @@ module Cms::PublicFilter
   end
 
   def set_site
-    host = request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]
+    host = request.env['HTTP_X_FORWARDED_HOST'] || request.env['HTTP_HOST']
     @cur_site ||= SS::Site.find_by domains: host rescue nil
     @cur_site ||= SS::Site.first if Rails.env.development?
     raise "404" if !@cur_site
@@ -83,7 +83,7 @@ module Cms::PublicFilter
   end
 
   def redirect_slash
-    redirect_to "#{request.env["REQUEST_PATH"]}/"
+    redirect_to "#{request.env['REQUEST_PATH']}/"
   end
 
   def deny_path
@@ -91,14 +91,14 @@ module Cms::PublicFilter
   end
 
   def parse_path
-    @path = @path.sub(/\/$/, "/index.html").sub(/^\//, "")
-    @html = @path.sub(/^\//, "").sub(/\.\w+$/, ".html")
+    @path = @path.sub(/\/$/, '/index.html').sub(/^\//, '')
+    @html = @path.sub(/^\//, "").sub(/\.\w+$/, '.html')
     @file = File.join(@cur_site.path, @path)
   end
 
   def find_node(path)
     dirs  = []
-    names = path.sub(/\/[^\/]+$/, "").split('/')
+    names = path.sub(/\/[^\/]+$/, '').split('/')
     names.each {|name| dirs << (dirs.size == 0 ? name : "#{dirs.last}/#{name}") }
 
     node = Cms::Node.site(@cur_site).where(:filename.in => dirs).sort(depth: -1).first
@@ -107,7 +107,7 @@ module Cms::PublicFilter
   end
 
   def render_node(node, path = @path)
-    rest = path.sub(/^#{node.filename}/, "")
+    rest = path.sub(/^#{node.filename}/, '')
     cell = recognize_path "/.#{@cur_site.host}/nodes/#{node.route}#{rest}"
     return unless cell
 
@@ -196,14 +196,14 @@ module Cms::PublicFilter
     return unless body
     return if response.body.present?
     respond_to do |format|
-      format.html { render inline: body, layout: "cms/page" }
+      format.html { render inline: body, layout: 'cms/page' }
       format.json { render json: body }
       format.xml  { render xml: body }
     end
   end
 
   def rescue_action(e = nil)
-    return render_error(e, status: 404) if e.to_s == "404"
+    return render_error(e, status: 404) if e.to_s == '404'
     return render_error(e, status: 404) if e.is_a? Mongoid::Errors::DocumentNotFound
     return render_error(e, status: 404) if e.is_a? ActionController::RoutingError
     raise e
@@ -215,14 +215,14 @@ module Cms::PublicFilter
 
     if @cur_site
       dir = "#{@cur_site.path}"
-      ["#{status}.html", "500.html"].each do |name|
+      ["#{status}.html", '500.html'].each do |name|
         file = "#{dir}/#{name}"
         render(status: status, file: file, layout: false) and return if Fs.exists?(file)
       end
     end
 
     dir = Rails.public_path.to_s
-    ["#{status}.html", "500.html"].each do |name|
+    ["#{status}.html", '500.html'].each do |name|
       file = "#{dir}/#{name}"
       render(status: status, file: file, layout: false) and return if Fs.exists?(file)
     end
