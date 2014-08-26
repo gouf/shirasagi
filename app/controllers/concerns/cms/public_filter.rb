@@ -144,7 +144,7 @@ module Cms::PublicFilter
   end
 
   def render_node(node, path = @path)
-    rest = path.sub(/^#{node.filename}/, "")
+    rest = path.sub(/^#{node.filename}/, '')
     cell = recognize_path "/.#{@cur_site.host}/nodes/#{node.route}#{rest}"
     return unless cell
 
