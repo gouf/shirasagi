@@ -195,7 +195,8 @@ module Cms::PublicFilter
 
     @cur_node   = node
     @cur_layout = node.layout
-    render_cell node.route.sub(/\/.*/, "/#{cell[:controller]}/view"), cell[:action]
+    node_route = node.route.sub(/\/.*/, "/#{cell[:controller]}/view")
+    render_cell node_route, cell[:action]
   end
 
   def send_node(body)
