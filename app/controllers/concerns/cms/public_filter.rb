@@ -177,7 +177,9 @@ module Cms::PublicFilter
     names = path.sub(%r{/[^\/]+$}, '').split('/')
     names.each {|name| dirs << (dirs.size == 0 ? name : "#{dirs.last}/#{name}") }
 
-    node = Cms::Node.site(@cur_site).where(:filename.in => dirs).sort(depth: -1).first
+    node = Cms::Node.site(@cur_site)
+      .where(:filename.in => dirs)
+      .sort(depth: -1).first
     return unless node
     @preview || node.public? ? node : nil
   end
