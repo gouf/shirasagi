@@ -18,6 +18,7 @@ module Cms::PublicFilter
   end
 
   public
+
   def index
     if @html =~ /\.layout\.html$/
       layout = find_layout(@html)
