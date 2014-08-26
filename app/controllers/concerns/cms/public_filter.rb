@@ -106,7 +106,7 @@ module Cms::PublicFilter
         debug_info: false
       css = sass.render
     rescue Sass::SyntaxError => e
-      msg  = e.backtrace[0].sub(/.*?\/_\//, "")
+      msg  = e.backtrace[0].sub(%r{.*?\/_/}, '')
       msg  = "[#{msg}]\\A #{e}".gsub('"', '\\"')
       css  = default_css_style(msg)
     end
