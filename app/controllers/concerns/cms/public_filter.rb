@@ -10,7 +10,8 @@ module Cms::PublicFilter
     rescue_from StandardError, with: :rescue_action
     before_action :set_site
     before_action :set_path
-    before_action :redirect_slash, if: ->{ request.env["REQUEST_PATH"] =~ /\/[^\.]+[^\/]$/ }
+    before_action :redirect_slash,
+      if: -> { request.env['REQUEST_PATH'] =~ %r{\/[^\.]+[^\/]$} }
     before_action :deny_path
     before_action :parse_path
     before_action :compile_scss
