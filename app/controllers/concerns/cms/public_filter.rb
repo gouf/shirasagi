@@ -45,6 +45,7 @@ module Cms::PublicFilter
   end
 
   private
+
   def set_site
     host = request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]
     @cur_site ||= SS::Site.find_by domains: host rescue nil
