@@ -41,9 +41,9 @@ module SS::Helpers
       code = method.sub(/\[\]$/, '').gsub(/\[(\D.*?)\]/, '["\\1"]')
 
       if method =~ /\[\]$/
-        value = eval("item.#{code}") || []
+        eval("item.#{code}") || []
       else
-        value = eval("item.#{code}")
+        eval("item.#{code}")
       end
     end
       end
