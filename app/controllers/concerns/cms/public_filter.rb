@@ -91,8 +91,8 @@ module Cms::PublicFilter
 
   def compile_scss
     return if @path !~ /\.css$/
-    return unless Fs.exists? @scss = @file.sub(/\.css$/, ".scss")
     return if @path =~ %r{(^|/)_[^/]*$}
+    return unless Fs.exists? @scss = @file.sub(/\.css$/, '.scss')
 
     css_mtime = Fs.exists?(@file) ? Fs.stat(@file).mtime : 0
     return if Fs.stat(@scss).mtime.to_i <= css_mtime.to_i
