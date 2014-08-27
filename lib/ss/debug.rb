@@ -4,22 +4,8 @@ module SS::Debug
     public
       def dump(data, lev = 1)
         s = []
-        if data.kind_of?(Array)
-          s << "<#{data.class}> ["
-          if data.size > 0
-            s << "\n"
-            data.each_with_index {|v, k| s << ("  " * lev) + "#{k} \t=> #{dump(v, lev + 1)}\n" }
-            s << ("  " * (lev-1))
-          end
-          s << "]"
-        elsif data.kind_of?(Hash)
-          s << "<#{data.class}> {"
-          if data.size > 0
-            s << "\n"
-            data.each {|k, v| s << ("  " * lev) + "#{k} \t=> #{dump(v, lev + 1)}\n" }
-            s << ("  " * (lev-1))
-          end
-          s << "}"
+        if data.is_a?(Array) || data.is_a?(Hash)
+          s << dump_for_array_hash(data, lev)
         else
           s << "#{data} <#{data.class}>"
         end
@@ -32,6 +18,32 @@ module SS::Debug
         require 'benchmark'
         time = Benchmark.realtime { n.times { yield } }
         dump "#{sprintf("%.6f ms", time/n)} (#{sprintf("%.3f ms", time)}/#{n})"
+      end
+
+    private
+      def dump_for_array_hash(data, lev = 1)
+        s = []
+        s << "<#{data.class}>{"
+        return s << '}' if data.size.zero?
+
+        s << "\n"
+        s << dump_for_array(data, lev) if data.is_a?(Array)
+        s << dump_for_hash(data, lev) if data.is_a?(Hash)
+        s << "#{'  ' * (lev - 1)}}"
+      end
+
+      def dump_for_array(data, lev)
+        data.map.with_index.reduce([]) do |s, pair|
+          v, k = pair
+          s << "#{'  ' * lev}#{k} \t=> #{dump(v, lev + 1)}\n"
+        end
+      end
+
+      def dump_for_hash(data, lev)
+        data.map.with_index.reduce([]) do |s, pair|
+          k, v = pair
+          s << "#{'  ' * lev}#{k} \t=> #{dump(v, lev + 1)}\n"
+        end
       end
   end
 end
