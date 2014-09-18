@@ -62,5 +62,49 @@ module Event::EventHelper
         "1#{t_date('month')}"
       end
     end
+  private
+
+  def step_month_to(step_to)
+
+    year, month, day = @year, @month, 1
+    year_step, month_step = step_value(step_to)
+
+    date = Date.new(year + year_step, month + month_step, day)
+    if within_one_year?(date)
+      text = "#{month + month_step}#{t_date('month')}"
+
+      path = "#{@cur_node.url}"
+      path << "#{'%04d' % (year + year_step)}"
+      path << "#{'%02d' % (month + month_step)}.html"
+
+      link_to(text, path)
+    else
+      "#{month + month_step}#{t_date('month')}"
+    end
+  end
+
+  def step_value(step_to)
+    month_step = {
+      next:  1,
+      prev: -1
+    }[step_to]
+    year_step = month_step
+
+    # the following cases, need to manipulate both the year and month.
+    #   a. month is  1 and :prev
+    #   b. month is 12 and :next
+    # in otherwise, it will be normal (just a manipulate month) processing.
+    month = @month
+    condition = (month == 1  && step_to == :prev) ||
+                (month == 12 && step_to == :next)
+    if condition
+      month = {'12' => 1, '1' => 12}[month.to_s]
+      month_step = 0
+    else
+      # not in edge of month, no need to step year
+      year_step = 0
+    end
+
+    [year_step, month_step]
   end
 end
