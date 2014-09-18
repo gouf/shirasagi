@@ -45,6 +45,7 @@ module Event::EventHelper
         "12#{t_date('month')}"
       end
     end
+    step_month_to(:prev)
   end
 
   def link_to_next_month
@@ -62,6 +63,7 @@ module Event::EventHelper
         "1#{t_date('month')}"
       end
     end
+    step_month_to(:next)
   private
 
   def step_month_to(step_to)
