@@ -64,6 +64,8 @@ module Event::EventHelper
       end
     end
     step_month_to(:next)
+  end
+
   private
 
   def step_month_to(step_to)
