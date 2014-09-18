@@ -69,7 +69,7 @@ module Event::EventHelper
   def step_month_to(step_to)
 
     year, month, day = @year, @month, 1
-    year_step, month_step = step_value(step_to)
+    year_step, month_step = step_values(step_to)
 
     date = Date.new(year + year_step, month + month_step, day)
     if within_one_year?(date)
@@ -85,7 +85,7 @@ module Event::EventHelper
     end
   end
 
-  def step_value(step_to)
+  def step_values(step_to)
     month_step = {
       next:  1,
       prev: -1
