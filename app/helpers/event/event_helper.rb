@@ -31,38 +31,10 @@ module Event::EventHelper
   end
 
   def link_to_prev_month
-    if @month != 1
-      if within_one_year?(Date.new(@year, @month - 1, 1))
-        link_to "#{@month - 1}#{t_date('month')}",
-          "#{@cur_node.url}#{'%04d' % @year}#{'%02d' % (@month - 1)}.html"
-      else
-        "#{@month - 1}#{t_date('month')}"
-      end
-    else
-      if within_one_year?(Date.new(@year - 1, 12, 1))
-        link_to "12#{t_date('month')}", "#{@cur_node.url}#{'%04d' % (@year - 1)}12.html"
-      else
-        "12#{t_date('month')}"
-      end
-    end
     step_month_to(:prev)
   end
 
   def link_to_next_month
-    if @month != 12
-      if within_one_year? Date.new(@year, @month + 1, 1)
-        link_to "#{@month + 1}#{t_date('month')}",
-          "#{@cur_node.url}#{'%04d' % @year}#{'%02d' % (@month + 1)}.html"
-      else
-        "#{@month + 1}#{t_date('month')}"
-      end
-    else
-      if within_one_year? Date.new(@year + 1, 1, 1)
-        link_to "1#{t_date('month')}", "#{@cur_node.url}#{'%04d' % (@year + 1)}01.html"
-      else
-        "1#{t_date('month')}"
-      end
-    end
     step_month_to(:next)
   end
 
