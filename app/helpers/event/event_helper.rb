@@ -30,16 +30,21 @@ module Event::EventHelper
     date.between?(start_date, close_date)
   end
 
+  # previous month
+  # @return [String]
   def link_to_prev_month
     step_month_to(:prev)
   end
 
+  # next month
+  # @return [String]
   def link_to_next_month
     step_month_to(:next)
   end
 
   private
 
+  # @param step_to [Symbol] :next or :prev
   def step_month_to(step_to)
 
     year, month, day = @year, @month, 1
@@ -59,6 +64,8 @@ module Event::EventHelper
     end
   end
 
+  # @param step_to [Symbol] :next or :prev
+  # @return [Array] [year_step, month_step]
   def step_values(step_to)
     month_step = {
       next:  1,
